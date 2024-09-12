@@ -1,0 +1,107 @@
+<?php
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\SaleController;
+use App\Http\Controllers\StockController;
+use App\Http\Controllers\StoreController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\EnsureStoreAccess;
+
+Route::group(['prefix' => 'auth'], function () {
+
+    Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
+    Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
+
+});
+
+Route::middleware(Authenticate::class)->group(function () {
+
+    // authentication
+    Route::get('/me',[AuthController::class, 'me'])->name('me');
+    Route::get('/users',[AuthController::class, 'list'])->name('list');
+    Route::get('/sendtoken',[AuthController::class, 'sendToken'])->name('sendtoken');
+    Route::post('/logout',[AuthController::class, 'logout'])->name('logout');
+
+    
+    Route::group(['prefix' => 'stores'], function () {
+
+        Route::get('/',[StoreController::class, 'list'])->name('stores.list');
+        Route::post('/store',[StoreController::class, 'store'])->name('stores.store');
+        Route::put('/edit/{id}',[StoreController::class, 'edit'])->name('stores.edit');
+        Route::get('/show/{id}',[StoreController::class, 'show'])->name('stores.show');
+        Route::delete('/delete/{id}',[StoreController::class, 'delete'])->name('stores.delete');
+
+    });
+
+    Route::middleware(EnsureStoreAccess::class)->group(function () {
+
+        Route::group(['prefix' => 'products'], function () {
+
+            Route::get('/',[ProductController::class, 'list'])->name('products.list');
+            Route::post('/store',[ProductController::class, 'store'])->name('products.store');
+            Route::put('/edit/{id}',[ProductController::class, 'edit'])->name('products.edit');
+            Route::get('/show/{id}',[ProductController::class, 'show'])->name('products.show');
+            Route::delete('/delete/{id}',[ProductController::class, 'delete'])->name('products.delete');
+
+        });
+
+        Route::group(['prefix' => 'purchases'], function () {
+
+            Route::get('/',[PurchaseController::class, 'list'])->name('purchases.list');
+            Route::post('/store',[PurchaseController::class, 'store'])->name('purchases.store');
+            Route::put('/edit/{id}',[PurchaseController::class, 'edit'])->name('purchases.edit');
+            Route::get('/show/{id}',[PurchaseController::class, 'show'])->name('purchases.show');
+            // Route::delete('/delete/{id}',[PurchaseController::class, 'delete'])->name('purchases.delete');
+
+        });
+
+        // sales
+
+        Route::group(['prefix' => 'sales'], function () {
+
+            Route::get('/',[SaleController::class, 'list'])->name('sales.list');
+            Route::post('/store',[SaleController::class, 'store'])->name('sales.store');
+            Route::get('/show/{id}',[SaleController::class, 'show'])->name('sales.show');
+            Route::put('/edit/{id}',[SaleController::class, 'edit'])->name('sales.edit');
+            // Route::delete('/delete',[SaleController::class, 'delete'])->name('sales.delete');
+
+        });
+
+        // stock
+        Route::group(['prefix' => 'stocks'], function () {
+
+            Route::get('/',[StockController::class, 'list'])->name('stocks.list');
+            Route::post('/show/{id}',[StockController::class, 'show'])->name('stocks.show');
+            Route::post('/store',[StockController::class, 'store'])->name('stocks.store');
+            Route::post('/edit/{id}',[StockController::class, 'edit'])->name('stocks.edit');
+            // Route::post('/show/{id}',[StockController::class, 'show'])->name('stocks.show');
+
+        });
+
+        // Supplier
+        Route::group(['prefix' => 'suppliers'], function () {
+
+            Route::get('/',[SupplierController::class, 'list'])->name('suppliers.list');
+            Route::post('/store',[SupplierController::class, 'store'])->name('suplliers.store');
+            Route::put('/edit/{id}',[SupplierController::class, 'edit'])->name('suppliers.edit');
+            Route::get('/show/{id}',[SupplierController::class, 'show'])->name('suppliers.show');
+          
+        });
+
+        Route::group(['prefix' => 'customers'], function () {
+
+            Route::get('/',[CustomerController::class, 'list'])->name('customers.list');
+            Route::post('/store',[CustomerController::class, 'store'])->name('customers.store');
+            Route::put('/edit/{id}',[CustomerController::class, 'edit'])->name('customers.edit');
+            Route::get('/show/{id}',[CustomerController::class, 'show'])->name('customers.show');
+        });
+    });
+});
+
+
