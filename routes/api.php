@@ -69,6 +69,8 @@ Route::middleware(Authenticate::class)->group(function () {
             Route::post('/store',[SaleController::class, 'store'])->name('sales.store');
             Route::get('/show/{id}',[SaleController::class, 'show'])->name('sales.show');
             Route::put('/edit/{id}',[SaleController::class, 'edit'])->name('sales.edit');
+            Route::get('/mostsoldproduct',[SaleController::class, 'mostSoldProduct'])->name('sales.mostSoldProduct');
+            Route::get('/totalprofitperday', [SaleController::class, 'totalProfitPerDay'])->name('sales.totalProfitPerDay');
             // Route::delete('/delete',[SaleController::class, 'delete'])->name('sales.delete');
 
         });

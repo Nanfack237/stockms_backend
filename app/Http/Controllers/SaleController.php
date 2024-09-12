@@ -10,6 +10,7 @@ use App\Models\Store;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
 class SaleController extends Controller
@@ -255,6 +256,66 @@ class SaleController extends Controller
 
     }
 
+    public function mostSoldProduct(Request $request)
+    {
+        // $startDate = '2024-09-01';
+        $storeData = json_decode($request->store, true);
+        $store_id = $storeData['id'];
+
+        $mostSoldProduct = Sale::join('products', 'sales.product_id', '=', 'products.id')
+        ->leftJoin('stocks', 'sales.stock_id', '=', 'stocks.id') // Assuming `purchase_items`
+        ->select('products.id', 'products.name', DB::raw('SUM(sales.quantity) as total_sold'))
+        ->where('sales.store_id', $store_id)
+        ->groupBy('products.id', 'products.name')
+        ->orderBy('total_sold', 'desc')
+        ->first();
+
+        if($mostSoldProduct){
+            $status = 200;
+            $response = [
+                'success' => 'The Most sold product',
+                'most_sold' => $mostSoldProduct
+            ];
+        } else {
+            $status = 422;
+            $response = [
+                'error' => 'Error, Fetching the most sold product',
+            ];
+        }
+
+        return response()->json($response, $status);
+    }
+
+    public function totalProfitPerDay(Request $request)
+    {
+        $storeData = json_decode($request->store, true);
+        $store_id = $storeData['id'];
+      
+        $date = '2024-05-08';
+        $totalProfitPerDay = Sale::join('products', 'sales.product_id', '=', 'products.id')
+            ->leftJoin('stocks', 'sales.stock_id', '=', 'stocks.id') // Assuming `purchase_items`
+            ->select(DB::raw('DATE(sales.date) as sale_date'), DB::raw('SUM((sales.unit_price - stocks.cost_price) * sales.quantity) as total_profit'))
+            ->where('sales.date', $date)  // Replace for date range if needed
+            ->where('sales.store_id', $store_id)
+            ->groupBy('sale_date')
+            ->orderBy('sale_date', 'asc')
+            ->get();
+
+        if($totalProfitPerDay){
+            $status = 200;
+            $response = [
+                'success' => 'Total Profit of today',
+                'totalprofitperday' => $totalProfitPerDay
+            ];
+        } else {
+            $status = 422;
+            $response = [
+                'error' => 'Error, Fetching the total profit',
+            ];
+        }
+
+        return response()->json($response, $status);
+    }
     // public function delete(Request $request, $id)
     // {
 
