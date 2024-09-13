@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
@@ -81,7 +80,8 @@ class AuthController extends Controller
         $user = User::create([
             'email' => $registerUserData['email'],
             'password' => Hash::make($registerUserData['password']),
-            'account_type' => 'admin'
+            'account_type' => 'admin',
+            'status' => 1
         ]);
 
         if($user){
