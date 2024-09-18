@@ -10,6 +10,7 @@ use App\Http\Controllers\StockController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\EnsureStoreAccess;
 
@@ -28,19 +29,17 @@ Route::middleware(Authenticate::class)->group(function () {
     Route::get('/sendtoken',[AuthController::class, 'sendToken'])->name('sendtoken');
     Route::post('/logout',[AuthController::class, 'logout'])->name('logout');
 
-    
-    Route::group(['prefix' => 'stores'], function () {
-
-        Route::get('/',[StoreController::class, 'list'])->name('stores.list');
-        Route::post('/store',[StoreController::class, 'store'])->name('stores.store');
-        Route::put('/edit/{id}',[StoreController::class, 'edit'])->name('stores.edit');
-        Route::get('/show/{id}',[StoreController::class, 'show'])->name('stores.show');
-        Route::delete('/delete/{id}',[StoreController::class, 'delete'])->name('stores.delete');
-
-    });
+    Route::get('stores/',[StoreController::class, 'list'])->name('stores.list');
 
     Route::middleware(EnsureStoreAccess::class)->group(function () {
 
+        Route::group(['prefix' => 'stores'], function () {
+
+            Route::put('/edit/{id}',[StoreController::class, 'edit'])->name('stores.edit');
+            Route::get('/show',[StoreController::class, 'show'])->name('stores.show');
+            Route::delete('/delete/{id}',[StoreController::class, 'delete'])->name('stores.delete');
+    
+        });
         Route::group(['prefix' => 'products'], function () {
 
             Route::get('/',[ProductController::class, 'list'])->name('products.list');
@@ -102,6 +101,14 @@ Route::middleware(Authenticate::class)->group(function () {
             Route::post('/store',[CustomerController::class, 'store'])->name('customers.store');
             Route::put('/edit/{id}',[CustomerController::class, 'edit'])->name('customers.edit');
             Route::get('/show/{id}',[CustomerController::class, 'show'])->name('customers.show');
+        });
+
+        Route::group(['prefix' => 'employees'], function () {
+
+            Route::get('/',[EmployeeController::class, 'list'])->name('employees.list');
+            Route::post('/store',[EmployeeController::class, 'store'])->name('employees.store');
+            Route::put('/edit/{id}',[EmployeeController::class, 'edit'])->name('employees.edit');
+            Route::get('/show/{id}',[EmployeeController::class, 'show'])->name('employees.show');
         });
     });
 });

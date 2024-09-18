@@ -2,27 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Supplier;
+use App\Models\Employee;
+use App\Models\Product;
+use App\Models\Store;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 
-class SupplierController extends Controller
+class EmployeeController extends Controller
 {
     public function list(Request $request){
 
         $storeData = json_decode($request->store, true);
         $store_id = $storeData['id'];
 
-        $suppliers = Supplier::where('store_id', $store_id)->get();
+        $employees = Employee::where('store_id', $store_id)->get();
 
-        if($suppliers){
+        if($employees){
 
             $status = 200;
             $response = [
-                'success' => 'suppliers',
-                'suppliers' => $suppliers,
+                'success' => 'employees',
+                'employees' => $employees,
             ];
 
         } else {
@@ -44,6 +46,7 @@ class SupplierController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name'=>'required|string|min:4',
+            'email'=>'required|string',
             'address'=>'required|string',
             'contact'=>'required|integer'
         ]);
@@ -52,27 +55,28 @@ class SupplierController extends Controller
             return response()->json($validator->errors(), 400);
         }
 
-        $storeSupplierData = $validator->validated();
-        $supplier = Supplier::create([
-            'name' => $storeSupplierData['name'],
-            'address' => $storeSupplierData['address'],
-            'contact' => $storeSupplierData['contact'],
+        $storeEmployeeData = $validator->validated();
+        $employee = Employee::create([
+            'name' => $storeEmployeeData['name'],
+            'email' => $storeEmployeeData['email'],
+            'address' => $storeEmployeeData['address'],
+            'contact' => $storeEmployeeData['contact'],
             'store_id'=> $store_id,
             'status' => 1
         ]);
 
-        if ($supplier) {
+        if ($employee) {
 
             $status = 201;
             $response = [
-                'success' => 'Supplier stored successfully !',
-                'supplier' => $supplier,
+                'success' => 'Employee stored successfully !',
+                'employee' => $employee,
             ];
 
         } else {
             $status = 422;
             $response = [
-                'error' => 'error, failed to store the Supplier!',
+                'error' => 'error, failed to store the Employee!',
             ];
         }
 
@@ -84,6 +88,7 @@ class SupplierController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|min:4',
+            'email' => 'required|string|email|min:4',
             'address' => 'required|string',
             'contact' => 'required|integer',
         ]);
@@ -95,24 +100,25 @@ class SupplierController extends Controller
         $storeData = json_decode($request->store, true);
         $store_id = $storeData['id'];
 
-        $supplier = Supplier::where('store_id', $store_id)->find($id);
+        $employee = Employee::where('store_id', $store_id)->find($id);
 
-        $editSupplierData = $validator->validated(); // Get validated data as array
+        $editEmployeeData = $validator->validated(); // Get validated data as array
 
-        $supplier->name = $editSupplierData['name'];
-        $supplier->address = $editSupplierData['address'];
-        $supplier->contact = $editSupplierData['contact'];
+        $employee->name = $editEmployeeData['name'];
+        $employee->email = $editEmployeeData['email'];
+        $employee->address = $editEmployeeData['address'];
+        $employee->contact = $editEmployeeData['contact'];
 
-        if ($supplier->save()) {
+        if ($employee->save()) {
             $status = 201;
             $response = [
-                'error' => 'Supplier edited successfully!',
-                'supplier' => $supplier,
+                'error' => 'Employee edited successfully!',
+                'employee' => $employee,
             ];
         } else {
             $status = 422;
             $response = [
-                'error' => 'Error, failed to edit the Supplier!',
+                'error' => 'Error, failed to edit the Employee!',
             ];
         }
 
@@ -124,18 +130,18 @@ class SupplierController extends Controller
         $storeData = json_decode($request->store, true);
         $store_id = $storeData['id'];
 
-        $supplier = Supplier::where('store_id', $store_id)->find($id);
+        $employee = Employee::where('store_id', $store_id)->find($id);
 
-        if($supplier){
+        if($employee){
             $status = 200;
             $response = [
-                'success' => 'Supplier',
-                'supplier' => $supplier,
+                'success' => 'Employee',
+                'employee' => $employee,
             ];
         } else {
             $status = 422;
             $response = [
-                'error' => 'error, failed to find supplier',
+                'error' => 'error, failed to find Employee',
             ];
         }
 
@@ -143,26 +149,4 @@ class SupplierController extends Controller
         return response()->json($response, $status);
 
     }
-
-    // public function delete(Request $request, $id)
-    // {
-
-    //     $storeData = json_decode($request->store, true);
-    //     $store_id = $storeData['id'];
-
-    //     $supplier = Supplier::where('store_id', $store_id)->find($id);
-    //     if($supplier->delete()){
-    //         $status = 200;
-    //         $response = [
-    //             'success' => 'Supplier deleted successfully',
-    //         ];
-    //     } else {
-    //         $status = 422;
-    //         $response = [
-    //             'error' => 'error, failed to delete supplier',
-    //         ];
-    //     }
-
-    //     return response()->json($response, $status);
-    // }
 }

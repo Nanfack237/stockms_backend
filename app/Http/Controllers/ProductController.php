@@ -59,7 +59,7 @@ class ProductController extends Controller
             'name' => $storeProductData['name'],
             'category' => $storeProductData['category'],
             'description' => $storeProductData['description'],
-            'image'=> $storeProductData['image'],
+            'image'=> 'images/login.jpg',
             'store_id'=> $store_id,
             'status' => 1
         ]);

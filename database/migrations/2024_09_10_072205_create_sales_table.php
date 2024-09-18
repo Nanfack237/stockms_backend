@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('customer_name');
             $table->integer('customer_contact');
             $table->integer('status');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

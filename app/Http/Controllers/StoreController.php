@@ -45,6 +45,8 @@ class StoreController extends Controller
             'description'=>'required|string|min:10',
             'location'=>'required|string',
             'contact'=>'required|integer',
+            
+
         ]);
 
         if ($validator->fails()) {
@@ -62,6 +64,7 @@ class StoreController extends Controller
             'description' => $saveStoreData['description'],
             'location'=> $saveStoreData['location'],
             'contact'=> $saveStoreData['contact'],
+            'image'=>'images/login.jpg',
             'user_id'=> $user_id,
             'status' => 1
         ]);
@@ -90,8 +93,9 @@ class StoreController extends Controller
             'name'=>'required|string|name|unique:stores',
             'category'=>'required|string|max:30',
             'description'=>'required|string|max:255',
-            'location'=>'required|string|max:50',
-            'contact'=>'required|integer|max:20',
+            'location'=>'required|string',
+            'contact'=>'required|integer',
+            'image'=>'required|string',
         ]);
 
         if ($validator->fails()) {
@@ -107,6 +111,7 @@ class StoreController extends Controller
         $store->description = $editStoreData['description'];
         $store->location = $editStoreData['location'];
         $store->contact = $editStoreData['contact'];
+        $store->image = $editStoreData['image'];
 
         if ($store->save()) {
             $status = 201;
@@ -124,12 +129,15 @@ class StoreController extends Controller
         return response()->json($response, $status);
     }
 
-    public function show(Request $request, $id)
+    public function show(Request $request)
     {
         $userData = json_decode($request->user, true);
         $user_id = $userData['id'];
 
-        $store = Store::where('user_id', $user_id)->find($id);
+        $storeData = json_decode($request->store, true);
+        $store_id = $storeData['id'];
+
+        $store = Store::where('user_id', $user_id)->find($store_id);
 
         if($store){
             $status = 200;

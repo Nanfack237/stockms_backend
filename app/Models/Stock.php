@@ -18,6 +18,7 @@ class Stock extends Model
         'quantity',
         'cost_price',
         'last_quantity',
+        'status'
 
     ];
 

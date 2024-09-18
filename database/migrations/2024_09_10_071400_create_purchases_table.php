@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('unit_price');
             $table->integer('total_price');
             $table->integer('status');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

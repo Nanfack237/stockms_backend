@@ -21,7 +21,7 @@ class EnsureStoreAccess
         $user_id = $userData['id'];
 
           // Retrieve the selected store ID from the session
-          $selectedStoreId = $request->header('selectedStoreId');
+          $selectedStoreId = $request->header('storeId');
           // Find the store based on the selected ID
           $store = Store::where('user_id', $user_id)->where('id', $selectedStoreId)->first();
   

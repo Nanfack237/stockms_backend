@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('description');
             $table->string('location');
             $table->integer('contact');
+            $table->string('image');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->integer('status');
             $table->timestamps();

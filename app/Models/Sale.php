@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class Sale extends Model
 {
@@ -20,12 +21,18 @@ class Sale extends Model
         'total_price',
         'customer_name',
         'customer_contact',
+        'user_id',
         'status'
     ];
 
     public function products()
     {
         return $this->belongsTo(Product::class, 'product_id');
+    }
+
+    public function users()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function stores()

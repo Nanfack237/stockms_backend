@@ -4,23 +4,29 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Store;
 use App\Models\User;
 
-class Store extends Model
+class Employee extends Model
 {
     use HasFactory;
 
+    
     protected $fillable = [
         'name',
-        'category',
-        'description',
-        'location',
+        'email',
+        'address',
         'contact',
-        'image',
+        'store_id',
         'user_id',
         'status'
     ];
 
+    public function stores()
+    {
+        return $this->belongsTo(Store::class, 'store_id');
+    }
+    
     public function users()
     {
         return $this->belongsTo(User::class, 'user_id');
